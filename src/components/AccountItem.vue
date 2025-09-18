@@ -1,8 +1,7 @@
 <template>
     <div class="account-item card mb-3" :class="{ 'border-danger': hasErrors }">
         <div
-            class="card-header d-flex justify-content-between align-items-center"
-        >
+            class="card-header d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0">
                 Учетная запись #{{ account.id.slice(-4) }}
             </h5>
@@ -27,9 +26,7 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label"
-                    >Тип записи <span class="text-danger">*</span></label
-                >
+                <label class="form-label">Тип записи <span class="text-danger">*</span></label>
                 <select
                     v-model="account.type"
                     @change="handleTypeChange"
@@ -41,9 +38,7 @@
             </div>
 
             <div class="mb-3" :class="{ 'has-error': account.errors?.login }">
-                <label class="form-label"
-                    >Логин <span class="text-danger">*</span></label
-                >
+                <label class="form-label">Логин <span class="text-danger">*</span></label>
                 <input
                     v-model="account.login"
                     placeholder="Введите логин"
@@ -57,23 +52,31 @@
                 </div>
             </div>
 
-            <div
+            <div 
                 v-if="account.type === 'Локальная'"
                 class="mb-3"
                 :class="{ 'has-error': account.errors?.password }"
             >
-                <label class="form-label"
-                    >Пароль <span class="text-danger">*</span></label
-                >
-                <input
-                    v-model="account.password"
-                    type="password"
-                    placeholder="Введите пароль"
-                    maxlength="100"
-                    @blur="validate"
-                    class="form-control"
-                    :class="{ 'is-invalid': account.errors?.password }"
-                />
+                <label class="form-label">Пароль <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <input
+                        v-model="account.password"
+                        :type="showPassword ? 'text' : 'password'"
+                        placeholder="Введите пароль"
+                        maxlength="100"
+                        @blur="validate"
+                        class="form-control"
+                        :class="{ 'is-invalid': account.errors?.password }"
+                    />
+                    <button
+                        class="btn btn-outline-secondary password-toggle"
+                        type="button"
+                        @click="showPassword = !showPassword"
+                        :title="showPassword ? 'Скрыть пароль' : 'Показать пароль'"
+                    >
+                        <i :class="showPassword ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"></i>
+                    </button>
+                </div>
                 <div v-if="account.errors?.password" class="invalid-feedback">
                     {{ account.errors.password }}
                 </div>
@@ -100,6 +103,7 @@ const emit = defineEmits<Emits>();
 const accountStore = useAccountStore();
 
 const labelsString = ref("");
+const showPassword = ref(false);
 
 watch(
     () => props.account.labels,
@@ -162,5 +166,17 @@ const hasErrors = computed(() => {
 .has-error {
     border-left: 3px solid #dc3545;
     padding-left: 10px;
+}
+.password-toggle {
+  transition: all 0.2s ease;
+}
+
+.password-toggle:hover {
+  background-color: #6c757d;
+  color: white;
+}
+
+.password-toggle:focus {
+  box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.25);
 }
 </style>

@@ -1,23 +1,18 @@
-FROM node:18-alpine AS builder
+FROM node:18-alpine
 
 WORKDIR /app
 
+# Копируем package.json и package-lock.json
 COPY package*.json ./
 
+# Устанавливаем зависимости
 RUN npm ci
 
+# Копируем исходный код
 COPY . .
 
-RUN npm run build
-
-FROM node:18-alpine AS production
-
-WORKDIR /app
-
-RUN npm install -g serve
-
-COPY --from=builder /app/dist ./dist
-
+# Открываем порт
 EXPOSE 3000
 
-CMD ["serve", "-s", "dist", "-l", "3000"]
+# Запускаем dev сервер
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
