@@ -7,7 +7,7 @@
             <i class="bi bi-person-badge me-2"></i>Управление учетными записями
           </h1>
           <button class="btn btn-primary" @click="handleAddAccount">
-            Добавить учетную запись
+            Добавить
           </button>
         </div>
       </div>
@@ -16,11 +16,10 @@
     <div v-if="accounts.length === 0" class="row">
       <div class="col-12">
         <div class="text-center p-5 bg-white rounded shadow-sm">
-          <i class="bi bi-inbox display-1 text-muted mb-3"></i>
           <h3 class="text-muted">Нет учетных записей</h3>
-          <p class="text-muted">Нажмите кнопку "Добавить первую запись" чтобы добавить первую учетную запись</p>
+          <p class="text-muted">Нажмите кнопку "Добавить" чтобы добавить первую учетную запись</p>
           <button class="btn btn-primary mt-3" @click="handleAddAccount">
-            Добавить первую запись
+            Добавить
           </button>
         </div>
       </div>
