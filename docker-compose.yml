@@ -1,0 +1,11 @@
+services:
+  account-manager:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.account-manager.rule=Host(`localhost`)"
