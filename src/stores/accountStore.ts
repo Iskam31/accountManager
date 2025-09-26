@@ -13,7 +13,10 @@ export const useAccountStore = defineStore('accounts', () => {
   };
 
   const saveToStorage = () => {
-    localStorage.setItem('accounts', JSON.stringify(accounts.value));
+    const validAccounts = accounts.value.filter(account => 
+      validateAccount(account, false)
+    );
+    localStorage.setItem('accounts', JSON.stringify(validAccounts));
   };
 
   const addAccount = () => {
@@ -39,7 +42,7 @@ export const useAccountStore = defineStore('accounts', () => {
     }
   };
 
-  const validateAccount = (account: Account): boolean => {
+  const validateAccount = (account: Account, updateErrors: boolean = true): boolean => {
     const errors: { login?: string; password?: string } = {};
     
     if (!account.login.trim()) {
@@ -56,8 +59,26 @@ export const useAccountStore = defineStore('accounts', () => {
       }
     }
 
-    updateAccount(account.id, { errors });
+    if (updateErrors) {
+      updateAccount(account.id, { errors });
+    }
+    
     return Object.keys(errors).length === 0;
+  };
+
+  const validateAllAccounts = (): boolean => {
+    let allValid = true;
+    accounts.value.forEach(account => {
+      if (!validateAccount(account)) {
+        allValid = false;
+      }
+    });
+    return allValid;
+  };
+
+  const saveValidAccounts = () => {
+    accounts.value = accounts.value.filter(account => validateAccount(account, false));
+    saveToStorage();
   };
 
   const parseLabels = (labelsString: string): AccountLabel[] => {
@@ -73,7 +94,15 @@ export const useAccountStore = defineStore('accounts', () => {
     return labels.map(label => label.text).join('; ');
   };
 
-  watch(accounts, saveToStorage, { deep: true });
+  watch(accounts, (newAccounts) => {
+    const validAccounts = newAccounts.filter(account => 
+      validateAccount(account, false)
+    );
+    
+    if (JSON.stringify(validAccounts) !== JSON.stringify(JSON.parse(localStorage.getItem('accounts') || '[]'))) {
+      localStorage.setItem('accounts', JSON.stringify(validAccounts));
+    }
+  }, { deep: true });
 
   loadFromStorage();
 
@@ -83,6 +112,8 @@ export const useAccountStore = defineStore('accounts', () => {
     removeAccount,
     updateAccount,
     validateAccount,
+    validateAllAccounts,
+    saveValidAccounts,
     parseLabels,
     formatLabels
   };
